@@ -1,7 +1,14 @@
 {
   "permissions": {
     "allow": [
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(start ms-settings:developers)",
+      "Bash(dir /s /b d:speechtotext*.jks 2)",
+      "Bash(nul)",
+      "Bash(test:*)",
+      "Bash(flutter --version:*)",
+      "Bash(flutter build:*)",
+      "Bash(flutter clean:*)"
     ],
     "deny": [],
     "ask": []
