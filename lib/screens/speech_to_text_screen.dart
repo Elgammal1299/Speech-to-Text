@@ -17,7 +17,7 @@ class _SpeechToTextScreenState extends State<SpeechToTextScreen>
   final SpeechService _speechService = SpeechService();
   SpeechState _state = const SpeechState();
   late AnimationController _animationController;
-  Language _selectedLanguage = Language.english;
+  Language _selectedLanguage = Language.arabic;
 
   @override
   void initState() {
