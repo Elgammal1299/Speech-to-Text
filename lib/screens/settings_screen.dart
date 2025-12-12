@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../services/storage_service.dart';
+import '../providers/theme_provider.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool showAppBar;
@@ -13,7 +15,6 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   final StorageService _storageService = StorageService();
   bool _autoSave = true;
-  bool _darkTheme = false;
   bool _isLoading = true;
 
   @override
@@ -24,11 +25,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   Future<void> _loadSettings() async {
     final autoSave = await _storageService.getAutoSave();
-    final darkTheme = await _storageService.getDarkTheme();
 
     setState(() {
       _autoSave = autoSave;
-      _darkTheme = darkTheme;
       _isLoading = false;
     });
   }
@@ -36,19 +35,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _setAutoSave(bool value) async {
     await _storageService.setAutoSave(value);
     setState(() => _autoSave = value);
-  }
-
-  Future<void> _setDarkTheme(bool value) async {
-    await _storageService.setDarkTheme(value);
-    setState(() => _darkTheme = value);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Theme setting saved. Restart app to apply changes.'),
-          duration: Duration(seconds: 3),
-        ),
-      );
-    }
   }
 
   Future<void> _clearAllData() async {
@@ -122,12 +108,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 _buildSection(
                   'Appearance',
                   [
-                    _buildSwitchTile(
-                      Icons.dark_mode,
-                      'Dark theme',
-                      'Enable dark mode (requires app restart)',
-                      _darkTheme,
-                      _setDarkTheme,
+                    Consumer<ThemeProvider>(
+                      builder: (context, themeProvider, child) {
+                        return _buildSwitchTile(
+                          Icons.dark_mode,
+                          'Dark theme',
+                          'Enable dark mode instantly',
+                          themeProvider.isDarkMode,
+                          (value) => themeProvider.toggleTheme(),
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -151,13 +141,30 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildInfoTile(
                       Icons.info,
                       'Version',
-                      '1.0.0',
+                      '2.0.0',
                     ),
                     const Divider(height: 1),
                     _buildInfoTile(
                       Icons.code,
                       'Developer',
                       'Speech to Text App',
+                    ),
+                    const Divider(height: 1),
+                    _buildActionTile(
+                      Icons.privacy_tip,
+                      'Privacy Policy',
+                      'Read our privacy policy',
+                      Colors.blue,
+                      () {
+                        // TODO: Open privacy policy link
+                        // This will be implemented when we host the privacy policy
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Privacy Policy: All data stored locally on device'),
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

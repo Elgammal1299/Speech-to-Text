@@ -1,11 +1,24 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/voice_note.dart';
+
+class DeletedNoteEntry {
+  final VoiceNote note;
+  final DateTime deletedAt;
+
+  DeletedNoteEntry(this.note, this.deletedAt);
+}
 
 class StorageService {
   static const String _notesKey = 'voice_notes';
   static const String _autoSaveKey = 'auto_save';
   static const String _themeKey = 'dark_theme';
+
+  // Undo buffer - stores last 5 deleted notes for 30 seconds
+  final List<DeletedNoteEntry> _deletedNotesBuffer = [];
+  final int _maxBufferSize = 5;
+  final Duration _undoTimeout = const Duration(seconds: 30);
 
   // Save a voice note
   Future<bool> saveNote(VoiceNote note) async {
@@ -40,10 +53,15 @@ class StorageService {
     }
   }
 
-  // Delete a voice note
+  // Delete a voice note (with undo support)
   Future<bool> deleteNote(String noteId) async {
     try {
       final notes = await getAllNotes();
+      final noteToDelete = notes.firstWhere((note) => note.id == noteId);
+
+      // Add to undo buffer
+      _addToUndoBuffer(noteToDelete);
+
       notes.removeWhere((note) => note.id == noteId);
 
       final prefs = await SharedPreferences.getInstance();
@@ -51,6 +69,44 @@ class StorageService {
       final jsonString = jsonEncode(notesJson);
 
       return await prefs.setString(_notesKey, jsonString);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Add note to undo buffer with auto-cleanup
+  void _addToUndoBuffer(VoiceNote note) {
+    // Clean up expired entries
+    _cleanupExpiredEntries();
+
+    // Add new entry
+    _deletedNotesBuffer.insert(0, DeletedNoteEntry(note, DateTime.now()));
+
+    // Maintain max buffer size
+    if (_deletedNotesBuffer.length > _maxBufferSize) {
+      _deletedNotesBuffer.removeLast();
+    }
+  }
+
+  // Clean up entries older than timeout
+  void _cleanupExpiredEntries() {
+    final now = DateTime.now();
+    _deletedNotesBuffer.removeWhere(
+      (entry) => now.difference(entry.deletedAt) > _undoTimeout,
+    );
+  }
+
+  // Undo last delete operation
+  Future<bool> undoDelete() async {
+    _cleanupExpiredEntries();
+
+    if (_deletedNotesBuffer.isEmpty) {
+      return false;
+    }
+
+    try {
+      final deletedEntry = _deletedNotesBuffer.removeAt(0);
+      return await saveNote(deletedEntry.note);
     } catch (e) {
       return false;
     }

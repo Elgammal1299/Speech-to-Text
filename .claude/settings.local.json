@@ -8,7 +8,10 @@
       "Bash(test:*)",
       "Bash(flutter --version:*)",
       "Bash(flutter build:*)",
-      "Bash(flutter clean:*)"
+      "Bash(flutter clean:*)",
+      "Bash(ls:*)",
+      "Bash(git -C /d/speechtotext diff HEAD~5..HEAD --stat)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

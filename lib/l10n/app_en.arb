@@ -1,0 +1,121 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Voice Notes",
+  "@appTitle": {
+    "description": "The application title"
+  },
+
+  "voiceRecording": "Voice Recording",
+  "history": "History",
+  "statistics": "Statistics",
+  "settings": "Settings",
+
+  "record": "Record",
+  "recording": "Recording",
+  "pause": "Pause",
+  "resume": "Resume",
+  "stop": "Stop",
+  "play": "Play",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "search": "Search",
+  "filter": "Filter",
+  "sort": "Sort",
+  "share": "Share",
+  "export": "Export",
+
+  "slideToCancel": "Slide to cancel",
+  "tapToRecord": "Tap to start recording",
+  "recordingInProgress": "Recording in progress...",
+
+  "saveRecording": "Save Recording",
+  "enterTitle": "Enter title",
+  "titleHint": "My voice note",
+  "addNotes": "Add notes (optional)",
+  "notesHint": "Additional notes...",
+  "selectCategory": "Select Category",
+
+  "categoryPersonal": "Personal",
+  "categoryWork": "Work",
+  "categoryIdeas": "Ideas",
+  "categoryMeetings": "Meetings",
+  "categoryReminders": "Reminders",
+  "categoryStudy": "Study",
+  "categoryMusic": "Music",
+  "categoryOther": "Other",
+
+  "searchNotes": "Search notes...",
+  "noNotesFound": "No notes found",
+  "noNotesMessage": "You haven't recorded any voice notes yet.\nTap the record button to get started!",
+
+  "allCategories": "All Categories",
+  "sortByDate": "Sort by Date",
+  "sortByTitle": "Sort by Title",
+  "sortByDuration": "Sort by Duration",
+
+  "noteDeletedSuccessfully": "Note deleted successfully",
+  "undo": "Undo",
+  "noteRestoredSuccessfully": "Note restored successfully",
+
+  "deleteNoteTitle": "Delete Note",
+  "deleteNoteMessage": "Are you sure you want to delete this note?",
+
+  "editNote": "Edit Note",
+  "updateNote": "Update Note",
+  "noteUpdatedSuccessfully": "Note updated successfully",
+
+  "duration": "Duration",
+  "createdOn": "Created on",
+  "category": "Category",
+
+  "totalNotes": "Total Notes",
+  "totalDuration": "Total Duration",
+  "averageDuration": "Average Duration",
+  "notesThisWeek": "Notes This Week",
+  "notesThisMonth": "Notes This Month",
+  "mostUsedCategory": "Most Used Category",
+  "categoryBreakdown": "Category Breakdown",
+
+  "general": "General",
+  "appearance": "Appearance",
+  "data": "Data",
+  "about": "About",
+
+  "autoSaveNotes": "Auto-save notes",
+  "autoSaveNotesDesc": "Automatically save notes after recording",
+  "darkTheme": "Dark theme",
+  "darkThemeDesc": "Enable dark mode instantly",
+
+  "clearAllNotes": "Clear all notes",
+  "clearAllNotesDesc": "Delete all saved voice notes",
+  "clearAllDataTitle": "Clear All Data",
+  "clearAllDataMessage": "Are you sure you want to delete all saved notes? This action cannot be undone.",
+  "deleteAll": "Delete All",
+  "allNotesDeletedSuccessfully": "All notes deleted successfully",
+
+  "version": "Version",
+  "developer": "Developer",
+  "developerName": "Speech to Text App",
+  "privacyPolicy": "Privacy Policy",
+  "privacyPolicyDesc": "Read our privacy policy",
+  "privacyPolicyMessage": "Privacy Policy: All data stored locally on device",
+
+  "recordingError": "Recording Error",
+  "playbackError": "Playback Error",
+  "microphonePermissionDenied": "Microphone permission is required to record audio",
+  "grantPermission": "Grant Permission",
+  "settingsApp": "Open Settings",
+
+  "notAvailable": "N/A",
+  "noData": "No data available",
+
+  "hours": "hours",
+  "minutes": "minutes",
+  "seconds": "seconds",
+  "hour": "hour",
+  "minute": "minute",
+  "second": "second"
+}

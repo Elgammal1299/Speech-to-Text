@@ -1,0 +1,118 @@
+{
+  "@@locale": "ar",
+
+  "appTitle": "الملاحظات الصوتية",
+
+  "voiceRecording": "تسجيل صوتي",
+  "history": "السجل",
+  "statistics": "الإحصائيات",
+  "settings": "الإعدادات",
+
+  "record": "تسجيل",
+  "recording": "جاري التسجيل",
+  "pause": "إيقاف مؤقت",
+  "resume": "استئناف",
+  "stop": "إيقاف",
+  "play": "تشغيل",
+  "save": "حفظ",
+  "cancel": "إلغاء",
+  "delete": "حذف",
+  "edit": "تعديل",
+  "search": "بحث",
+  "filter": "تصفية",
+  "sort": "ترتيب",
+  "share": "مشاركة",
+  "export": "تصدير",
+
+  "slideToCancel": "اسحب للإلغاء",
+  "tapToRecord": "اضغط لبدء التسجيل",
+  "recordingInProgress": "التسجيل جارٍ...",
+
+  "saveRecording": "حفظ التسجيل",
+  "enterTitle": "أدخل العنوان",
+  "titleHint": "ملاحظتي الصوتية",
+  "addNotes": "إضافة ملاحظات (اختياري)",
+  "notesHint": "ملاحظات إضافية...",
+  "selectCategory": "اختر الفئة",
+
+  "categoryPersonal": "شخصي",
+  "categoryWork": "عمل",
+  "categoryIdeas": "أفكار",
+  "categoryMeetings": "اجتماعات",
+  "categoryReminders": "تذكيرات",
+  "categoryStudy": "دراسة",
+  "categoryMusic": "موسيقى",
+  "categoryOther": "أخرى",
+
+  "searchNotes": "البحث في الملاحظات...",
+  "noNotesFound": "لم يتم العثور على ملاحظات",
+  "noNotesMessage": "لم تقم بتسجيل أي ملاحظات صوتية بعد.\nاضغط على زر التسجيل للبدء!",
+
+  "allCategories": "جميع الفئات",
+  "sortByDate": "ترتيب حسب التاريخ",
+  "sortByTitle": "ترتيب حسب العنوان",
+  "sortByDuration": "ترتيب حسب المدة",
+
+  "noteDeletedSuccessfully": "تم حذف الملاحظة بنجاح",
+  "undo": "تراجع",
+  "noteRestoredSuccessfully": "تم استعادة الملاحظة بنجاح",
+
+  "deleteNoteTitle": "حذف الملاحظة",
+  "deleteNoteMessage": "هل أنت متأكد من حذف هذه الملاحظة؟",
+
+  "editNote": "تعديل الملاحظة",
+  "updateNote": "تحديث الملاحظة",
+  "noteUpdatedSuccessfully": "تم تحديث الملاحظة بنجاح",
+
+  "duration": "المدة",
+  "createdOn": "تم الإنشاء في",
+  "category": "الفئة",
+
+  "totalNotes": "إجمالي الملاحظات",
+  "totalDuration": "إجمالي المدة",
+  "averageDuration": "متوسط المدة",
+  "notesThisWeek": "ملاحظات هذا الأسبوع",
+  "notesThisMonth": "ملاحظات هذا الشهر",
+  "mostUsedCategory": "الفئة الأكثر استخداماً",
+  "categoryBreakdown": "توزيع الفئات",
+
+  "general": "عام",
+  "appearance": "المظهر",
+  "data": "البيانات",
+  "about": "حول",
+
+  "autoSaveNotes": "الحفظ التلقائي",
+  "autoSaveNotesDesc": "حفظ الملاحظات تلقائياً بعد التسجيل",
+  "darkTheme": "الوضع الداكن",
+  "darkThemeDesc": "تفعيل الوضع الداكن فوراً",
+
+  "clearAllNotes": "مسح جميع الملاحظات",
+  "clearAllNotesDesc": "حذف جميع الملاحظات الصوتية",
+  "clearAllDataTitle": "مسح جميع البيانات",
+  "clearAllDataMessage": "هل أنت متأكد من حذف جميع الملاحظات؟ لا يمكن التراجع عن هذا الإجراء.",
+  "deleteAll": "حذف الكل",
+  "allNotesDeletedSuccessfully": "تم حذف جميع الملاحظات بنجاح",
+
+  "version": "الإصدار",
+  "developer": "المطور",
+  "developerName": "تطبيق تحويل الصوت لنص",
+  "privacyPolicy": "سياسة الخصوصية",
+  "privacyPolicyDesc": "اقرأ سياسة الخصوصية",
+  "privacyPolicyMessage": "سياسة الخصوصية: جميع البيانات مخزنة محلياً على الجهاز",
+
+  "recordingError": "خطأ في التسجيل",
+  "playbackError": "خطأ في التشغيل",
+  "microphonePermissionDenied": "صلاحية الميكروفون مطلوبة لتسجيل الصوت",
+  "grantPermission": "منح الصلاحية",
+  "settingsApp": "فتح الإعدادات",
+
+  "notAvailable": "غير متوفر",
+  "noData": "لا توجد بيانات",
+
+  "hours": "ساعات",
+  "minutes": "دقائق",
+  "seconds": "ثوانٍ",
+  "hour": "ساعة",
+  "minute": "دقيقة",
+  "second": "ثانية"
+}

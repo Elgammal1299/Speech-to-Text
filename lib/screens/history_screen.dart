@@ -309,10 +309,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Note deleted successfully'),
+              duration: const Duration(seconds: 4),
               action: SnackBarAction(
                 label: 'Undo',
-                onPressed: () {
-                  // TODO: Implement undo functionality
+                onPressed: () async {
+                  final success = await _storageService.undoDelete();
+                  if (success) {
+                    _loadNotes();
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Note restored successfully'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  }
                 },
               ),
             ),

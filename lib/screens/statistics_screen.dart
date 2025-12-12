@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../services/storage_service.dart';
+import '../models/category.dart';
 
 class StatisticsScreen extends StatefulWidget {
   final bool showAppBar;
@@ -341,7 +343,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.label, size: 20, color: Colors.grey[600]),
+              Icon(Icons.pie_chart, size: 20, color: Colors.grey[600]),
               const SizedBox(width: 8),
               Text(
                 'Categories',
@@ -353,53 +355,103 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          ...categoryBreakdown.entries.map((entry) {
-            final percentage = (entry.value / total * 100).toStringAsFixed(1);
-            final color = entry.key == 'Uncategorized' ? Colors.grey : Colors.blue;
-
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        entry.key,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      Text(
-                        '${entry.value} notes ($percentage%)',
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: entry.value / total,
-                      backgroundColor: Colors.grey[200],
-                      color: color,
-                      minHeight: 8,
+          const SizedBox(height: 24),
+          // Pie Chart
+          SizedBox(
+            height: 200,
+            child: Row(
+              children: [
+                // Chart
+                Expanded(
+                  flex: 2,
+                  child: PieChart(
+                    PieChartData(
+                      sectionsSpace: 2,
+                      centerSpaceRadius: 40,
+                      sections: _buildPieChartSections(categoryBreakdown, total),
                     ),
                   ),
-                ],
-              ),
-            );
-          }),
+                ),
+                // Legend
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: categoryBreakdown.entries.map((entry) {
+                      final category = Categories.all.firstWhere(
+                        (c) => c.name == entry.key,
+                        orElse: () => Categories.other,
+                      );
+                      final percentage = (entry.value / total * 100).toStringAsFixed(0);
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: category.color,
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                entry.key,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ),
+                            Text(
+                              '$percentage%',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  List<PieChartSectionData> _buildPieChartSections(
+    Map<String, int> categoryBreakdown,
+    int total,
+  ) {
+    return categoryBreakdown.entries.map((entry) {
+      final category = Categories.all.firstWhere(
+        (c) => c.name == entry.key,
+        orElse: () => Categories.other,
+      );
+      final percentage = (entry.value / total * 100);
+
+      return PieChartSectionData(
+        color: category.color,
+        value: entry.value.toDouble(),
+        title: '${percentage.toStringAsFixed(0)}%',
+        radius: 50,
+        titleStyle: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+        ),
+      );
+    }).toList();
   }
 
   Widget _buildInsightsCard() {

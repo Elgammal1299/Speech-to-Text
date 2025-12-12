@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import '../services/audio_service.dart';
 import '../services/storage_service.dart';
+import '../services/speech_to_text_service.dart';
 import '../models/voice_note.dart';
 import '../models/category.dart';
 
@@ -18,8 +19,11 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     with SingleTickerProviderStateMixin {
   final AudioService _audioService = AudioService();
   final StorageService _storageService = StorageService();
+  final SpeechToTextService _speechService = SpeechToTextService();
 
   bool _isRecording = false;
+  bool _sttEnabled = true; // Speech-to-text enabled by default
+  String _transcription = '';
   Duration _recordingDuration = Duration.zero;
   Timer? _timer;
   late AnimationController _animationController;
@@ -42,6 +46,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     _timer?.cancel();
     _animationController.dispose();
     _audioService.dispose();
+    _speechService.dispose();
     super.dispose();
   }
 
@@ -83,8 +88,23 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
         _isRecording = true;
         _currentRecordingPath = path;
         _slideOffset = 0;
+        _transcription = '';
       });
       _startTimer();
+
+      // Start speech-to-text if enabled
+      if (_sttEnabled) {
+        _speechService.startListening(
+          onResult: (text) {
+            if (mounted) {
+              setState(() {
+                _transcription = text;
+              });
+            }
+          },
+          localeId: 'en_US', // You can make this configurable later
+        );
+      }
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to start recording')),
@@ -94,6 +114,12 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
 
   Future<void> _stopRecording({bool save = true}) async {
     _stopTimer();
+
+    // Stop speech-to-text
+    if (_sttEnabled) {
+      await _speechService.stopListening();
+    }
+
     final path = await _audioService.stopRecording();
 
     if (path != null && mounted) {
@@ -109,6 +135,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
         setState(() {
           _currentRecordingPath = null;
           _recordingDuration = Duration.zero;
+          _transcription = '';
         });
       }
     }
@@ -116,18 +143,25 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
 
   Future<void> _cancelRecording() async {
     _stopTimer();
+
+    // Cancel speech-to-text
+    if (_sttEnabled) {
+      await _speechService.cancelListening();
+    }
+
     await _audioService.cancelRecording();
     setState(() {
       _isRecording = false;
       _currentRecordingPath = null;
       _recordingDuration = Duration.zero;
       _slideOffset = 0;
+      _transcription = '';
     });
   }
 
   Future<void> _showSaveDialog() async {
     final titleController = TextEditingController();
-    final notesController = TextEditingController();
+    final notesController = TextEditingController(text: _transcription); // Pre-fill with transcription
     String? selectedCategory;
 
     final result = await showDialog<Map<String, dynamic>?>(
@@ -379,6 +413,55 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                         fontFeatures: [FontFeature.tabularFigures()],
                       ),
                     ),
+                    // Display live transcription
+                    if (_sttEnabled && _transcription.isNotEmpty) ...[
+                      const SizedBox(height: 24),
+                      Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 32),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: Colors.blue.withValues(alpha: 0.3),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.text_fields,
+                                  size: 16,
+                                  color: Colors.blue[700],
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Live Transcription',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.blue[700],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              _transcription,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.center,
+                              maxLines: 3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ],
                 ],
               ),
