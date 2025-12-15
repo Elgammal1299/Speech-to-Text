@@ -23,8 +23,8 @@ android {
         applicationId = "com.voicespeech.app"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 3
-        versionName = flutter.versionName
+        versionCode = 5
+        versionName = "2.0.0"
     }
 
     compileOptions {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/storage_service.dart';
 import '../providers/theme_provider.dart';
+import '../theme/app_colors.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool showAppBar;
@@ -71,20 +72,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: widget.showAppBar
           ? AppBar(
-              elevation: 0,
-              backgroundColor: Colors.white,
-              title: const Text(
+              title: Text(
                 'Settings',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: theme.appBarTheme.titleTextStyle,
               ),
-              centerTitle: true,
             )
           : null,
       body: _isLoading
@@ -174,6 +171,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   Widget _buildSection(String title, List<Widget> children) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -181,20 +181,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.only(left: 8, bottom: 8),
           child: Text(
             title,
-            style: TextStyle(
-              fontSize: 14,
+            style: theme.textTheme.bodySmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: Colors.grey[600],
             ),
           ),
         ),
         Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: theme.colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
                 blurRadius: 10,
                 offset: const Offset(0, 2),
               ),
@@ -213,33 +211,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
     bool value,
     Function(bool) onChanged,
   ) {
+    final theme = Theme.of(context);
+
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.blue.withValues(alpha: 0.1),
+          color: AppColors.primaryWithOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, color: Colors.blue, size: 24),
+        child: Icon(icon, color: AppColors.primary, size: 24),
       ),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-        ),
+        style: theme.textTheme.titleMedium,
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          fontSize: 13,
-          color: Colors.grey[600],
-        ),
+        style: theme.textTheme.bodySmall,
       ),
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeTrackColor: Colors.blue,
       ),
     );
   }
@@ -251,6 +244,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     Color color,
     VoidCallback onTap,
   ) {
+    final theme = Theme.of(context);
+
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -262,47 +257,39 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       title: Text(
         title,
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
+        style: theme.textTheme.titleMedium?.copyWith(
           color: color,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          fontSize: 13,
-          color: Colors.grey[600],
-        ),
+        style: theme.textTheme.bodySmall,
       ),
-      trailing: Icon(Icons.chevron_right, color: Colors.grey[400]),
+      trailing: Icon(Icons.chevron_right, color: theme.iconTheme.color?.withValues(alpha: 0.5)),
       onTap: onTap,
     );
   }
 
   Widget _buildInfoTile(IconData icon, String title, String value) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.grey.withValues(alpha: 0.1),
+          color: (isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary).withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: Icon(icon, color: Colors.grey[700], size: 24),
+        child: Icon(icon, color: theme.iconTheme.color, size: 24),
       ),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
-        ),
+        style: theme.textTheme.titleMedium,
       ),
       trailing: Text(
         value,
-        style: TextStyle(
-          fontSize: 14,
-          color: Colors.grey[600],
-        ),
+        style: theme.textTheme.bodyMedium,
       ),
     );
   }

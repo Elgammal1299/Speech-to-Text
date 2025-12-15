@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/voice_note.dart';
 import '../models/category.dart';
 import '../services/storage_service.dart';
+import '../theme/app_colors.dart';
 import 'note_detail_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
@@ -71,23 +72,23 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: widget.showAppBar
           ? AppBar(
               elevation: 0,
-              backgroundColor: Colors.white,
-              title: const Text(
+              backgroundColor: colorScheme.surface,
+              title: Text(
                 'History',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: theme.appBarTheme.titleTextStyle,
               ),
               centerTitle: true,
               actions: [
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.sort, color: Colors.black87),
+                  icon: Icon(Icons.sort, color: theme.iconTheme.color),
                   tooltip: 'Sort by',
                   onSelected: (value) {
                     setState(() => _sortBy = value);
@@ -101,14 +102,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           Icon(
                             Icons.calendar_today,
                             size: 16,
-                            color: _sortBy == 'date' ? Colors.blue : Colors.grey[600],
+                            color: _sortBy == 'date' ? colorScheme.primary : theme.textTheme.bodyMedium?.color,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             'Date',
                             style: TextStyle(
                               fontWeight: _sortBy == 'date' ? FontWeight.bold : FontWeight.normal,
-                              color: _sortBy == 'date' ? Colors.blue : Colors.black87,
+                              color: _sortBy == 'date' ? colorScheme.primary : theme.textTheme.bodyLarge?.color,
                             ),
                           ),
                         ],
@@ -121,14 +122,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           Icon(
                             Icons.title,
                             size: 16,
-                            color: _sortBy == 'title' ? Colors.blue : Colors.grey[600],
+                            color: _sortBy == 'title' ? colorScheme.primary : theme.textTheme.bodyMedium?.color,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             'Title',
                             style: TextStyle(
                               fontWeight: _sortBy == 'title' ? FontWeight.bold : FontWeight.normal,
-                              color: _sortBy == 'title' ? Colors.blue : Colors.black87,
+                              color: _sortBy == 'title' ? colorScheme.primary : theme.textTheme.bodyLarge?.color,
                             ),
                           ),
                         ],
@@ -141,14 +142,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           Icon(
                             Icons.access_time,
                             size: 16,
-                            color: _sortBy == 'duration' ? Colors.blue : Colors.grey[600],
+                            color: _sortBy == 'duration' ? colorScheme.primary : theme.textTheme.bodyMedium?.color,
                           ),
                           const SizedBox(width: 8),
                           Text(
                             'Duration',
                             style: TextStyle(
                               fontWeight: _sortBy == 'duration' ? FontWeight.bold : FontWeight.normal,
-                              color: _sortBy == 'duration' ? Colors.blue : Colors.black87,
+                              color: _sortBy == 'duration' ? colorScheme.primary : theme.textTheme.bodyLarge?.color,
                             ),
                           ),
                         ],
@@ -157,7 +158,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ],
                 ),
                 PopupMenuButton<String>(
-                  icon: const Icon(Icons.filter_list, color: Colors.black87),
+                  icon: Icon(Icons.filter_list, color: theme.iconTheme.color),
                   tooltip: 'Filter by category',
                   onSelected: (value) {
                     setState(() => _filterLanguage = value);
@@ -197,8 +198,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildSearchBar() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
-      color: Colors.white,
+      color: colorScheme.surface,
       padding: const EdgeInsets.all(16),
       child: TextField(
         onChanged: (value) {
@@ -222,7 +227,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             borderSide: BorderSide.none,
           ),
           filled: true,
-          fillColor: Colors.grey[100],
+          fillColor: isDark ? AppColors.darkSurfaceVariant : AppColors.lightSurfaceVariant,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
@@ -230,6 +235,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -237,14 +245,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
           Icon(
             Icons.history,
             size: 80,
-            color: Colors.grey[300],
+            color: isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary,
           ),
           const SizedBox(height: 16),
           Text(
             _searchQuery.isEmpty ? 'No notes yet' : 'No notes found',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -253,9 +259,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
             _searchQuery.isEmpty
                 ? 'Start recording to save notes'
                 : 'Try a different search term',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[400],
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary,
             ),
           ),
         ],
@@ -275,9 +280,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Widget _buildNoteCard(VoiceNote note) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     final categoryColor = note.category != null
         ? Categories.getColor(note.category)
-        : Colors.grey;
+        : colorScheme.secondary;
 
     return Dismissible(
       key: Key(note.id),
@@ -295,7 +303,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                style: TextButton.styleFrom(foregroundColor: AppColors.error),
                 child: const Text('Delete'),
               ),
             ],
@@ -334,7 +342,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       background: Container(
         margin: const EdgeInsets.only(bottom: 12),
         decoration: BoxDecoration(
-          color: Colors.red,
+          color: AppColors.error,
           borderRadius: BorderRadius.circular(16),
         ),
         alignment: Alignment.centerRight,
@@ -353,7 +361,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.white,
+            isDark ? AppColors.darkCardBackground : AppColors.lightCardBackground,
             categoryColor.withValues(alpha: 0.02),
           ],
         ),
@@ -364,7 +372,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             offset: const Offset(0, 2),
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -394,13 +402,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.audiotrack, size: 16, color: Colors.blue),
+                  Icon(Icons.audiotrack, size: 16, color: colorScheme.primary),
                   const SizedBox(width: 4),
                   Text(
                     note.formattedDuration,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 12,
-                      color: Colors.blue,
+                      color: colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -408,19 +416,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.grey[100],
+                      color: isDark ? AppColors.darkSurfaceVariant : AppColors.lightSurfaceVariant,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.calendar_today, size: 12, color: Colors.grey[600]),
+                        Icon(Icons.calendar_today, size: 12, color: theme.textTheme.bodyMedium?.color),
                         const SizedBox(width: 4),
                         Text(
                           note.formattedDate,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey[700],
+                          style: theme.textTheme.bodySmall?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -432,18 +438,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
               const SizedBox(height: 8),
               Text(
                 note.title,
-                style: const TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 12),
               Text(
                 note.preview,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: Colors.black87,
+                style: theme.textTheme.bodyMedium?.copyWith(
                   height: 1.4,
                 ),
                 maxLines: 3,

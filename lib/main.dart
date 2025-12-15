@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'screens/main_screen.dart';
 import 'providers/theme_provider.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(
@@ -35,22 +35,8 @@ class MyApp extends StatelessWidget {
           title: 'Voice Notes',
           debugShowCheckedModeBanner: false,
           themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.blue,
-              brightness: Brightness.light,
-            ),
-            useMaterial3: true,
-            textTheme: GoogleFonts.interTextTheme(ThemeData.light().textTheme),
-          ),
-          darkTheme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.blue,
-              brightness: Brightness.dark,
-            ),
-            useMaterial3: true,
-            textTheme: GoogleFonts.interTextTheme(ThemeData.dark().textTheme),
-          ),
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
           home: const MainScreen(),
         );
       },

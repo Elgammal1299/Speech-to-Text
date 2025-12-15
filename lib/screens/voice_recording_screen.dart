@@ -5,6 +5,7 @@ import '../services/storage_service.dart';
 import '../services/speech_to_text_service.dart';
 import '../models/voice_note.dart';
 import '../models/category.dart';
+import '../theme/app_colors.dart';
 
 class VoiceRecordingScreen extends StatefulWidget {
   final bool showAppBar;
@@ -22,7 +23,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
   final SpeechToTextService _speechService = SpeechToTextService();
 
   bool _isRecording = false;
-  bool _sttEnabled = true; // Speech-to-text enabled by default
+  final bool _sttEnabled = true; // Speech-to-text enabled by default
   String _transcription = '';
   Duration _recordingDuration = Duration.zero;
   Timer? _timer;
@@ -167,8 +168,12 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
     final result = await showDialog<Map<String, dynamic>?>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setState) {
+          final theme = Theme.of(context);
+          final isDark = theme.brightness == Brightness.dark;
+
+          return AlertDialog(
           title: const Text('Save Recording'),
           content: SingleChildScrollView(
             child: Column(
@@ -196,7 +201,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                 const SizedBox(height: 16),
                 Container(
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey),
+                    border: Border.all(color: isDark ? AppColors.darkBorder : AppColors.lightBorder),
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Column(
@@ -206,10 +211,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                         padding: const EdgeInsets.all(12),
                         child: Text(
                           'Category (optional)',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[700],
-                          ),
+                          style: theme.textTheme.bodySmall,
                         ),
                       ),
                       Wrap(
@@ -231,10 +233,10 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                               decoration: BoxDecoration(
                                 color: isSelected
                                     ? category.color.withValues(alpha: 0.2)
-                                    : Colors.grey[100],
+                                    : (isDark ? AppColors.darkSurfaceVariant : AppColors.lightSurfaceVariant),
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                  color: isSelected ? category.color : Colors.grey[300]!,
+                                  color: isSelected ? category.color : (isDark ? AppColors.darkBorder : AppColors.lightBorder),
                                   width: isSelected ? 2 : 1,
                                 ),
                               ),
@@ -244,14 +246,13 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                                   Icon(
                                     category.icon,
                                     size: 16,
-                                    color: isSelected ? category.color : Colors.grey[600],
+                                    color: isSelected ? category.color : theme.iconTheme.color,
                                   ),
                                   const SizedBox(width: 6),
                                   Text(
                                     category.name,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: isSelected ? category.color : Colors.grey[700],
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: isSelected ? category.color : theme.textTheme.bodyMedium?.color,
                                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                                     ),
                                   ),
@@ -268,11 +269,11 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Icon(Icons.access_time, size: 18),
+                    Icon(Icons.access_time, size: 18, color: theme.iconTheme.color),
                     const SizedBox(width: 8),
                     Text(
                       'Duration: ${_formatDuration(_recordingDuration)}',
-                      style: const TextStyle(fontSize: 14),
+                      style: theme.textTheme.bodyMedium,
                     ),
                   ],
                 ),
@@ -301,7 +302,8 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
               child: const Text('Save'),
             ),
           ],
-        ),
+        );
+        },
       ),
     );
 
@@ -362,20 +364,16 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: widget.showAppBar
           ? AppBar(
-              elevation: 0,
-              backgroundColor: Colors.white,
-              title: const Text(
+              title: Text(
                 'Voice Recorder',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: theme.appBarTheme.titleTextStyle,
               ),
-              centerTitle: true,
             )
           : null,
       body: Stack(
@@ -390,15 +388,13 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                     Icon(
                       Icons.mic_none,
                       size: 80,
-                      color: Colors.grey[400],
+                      color: theme.iconTheme.color?.withValues(alpha: 0.5),
                     ),
                     const SizedBox(height: 24),
                     Text(
                       'Hold to Record',
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.grey[600],
-                        fontWeight: FontWeight.w500,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: theme.textTheme.bodyMedium?.color,
                       ),
                     ),
                   ] else ...[
@@ -406,11 +402,11 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                     const SizedBox(height: 32),
                     Text(
                       _formatDuration(_recordingDuration),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 48,
                         fontWeight: FontWeight.bold,
-                        color: Colors.red,
-                        fontFeatures: [FontFeature.tabularFigures()],
+                        color: AppColors.recording,
+                        fontFeatures: const [FontFeature.tabularFigures()],
                       ),
                     ),
                     // Display live transcription
@@ -420,10 +416,10 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                         margin: const EdgeInsets.symmetric(horizontal: 32),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.blue.withValues(alpha: 0.1),
+                          color: AppColors.primaryWithOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Colors.blue.withValues(alpha: 0.3),
+                            color: AppColors.primaryWithOpacity(0.3),
                           ),
                         ),
                         child: Column(
@@ -434,14 +430,13 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                                 Icon(
                                   Icons.text_fields,
                                   size: 16,
-                                  color: Colors.blue[700],
+                                  color: AppColors.primary,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   'Live Transcription',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.blue[700],
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: AppColors.primary,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -450,10 +445,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                             const SizedBox(height: 8),
                             Text(
                               _transcription,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
-                              ),
+                              style: theme.textTheme.bodyMedium,
                               textAlign: TextAlign.center,
                               maxLines: 3,
                               overflow: TextOverflow.ellipsis,
@@ -490,10 +482,10 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
           height: 120,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            color: Colors.red.withValues(alpha: 0.1),
+            color: AppColors.errorWithOpacity(0.1),
             boxShadow: [
               BoxShadow(
-                color: Colors.red.withValues(alpha: 0.3 * _animationController.value),
+                color: AppColors.errorWithOpacity(0.3 * _animationController.value),
                 blurRadius: 40,
                 spreadRadius: 20,
               ),
@@ -505,7 +497,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
               height: 80,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.red,
+                color: AppColors.recording,
               ),
               child: const Icon(
                 Icons.mic,
@@ -520,13 +512,17 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
   }
 
   Widget _buildIdleControls() {
+    final theme = Theme.of(context);
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: theme.brightness == Brightness.dark
+                ? AppColors.darkCardShadow
+                : AppColors.lightCardShadow,
             blurRadius: 10,
             offset: const Offset(0, -2),
           ),
@@ -541,14 +537,10 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
             height: 70,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Colors.blue, Colors.blueAccent],
-              ),
+              gradient: AppColors.primaryGradient,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.blue.withValues(alpha: 0.3),
+                  color: AppColors.primaryWithOpacity(0.3),
                   blurRadius: 20,
                   spreadRadius: 2,
                 ),
@@ -566,6 +558,9 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
   }
 
   Widget _buildRecordingControls() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
         setState(() {
@@ -583,10 +578,10 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: theme.colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -603,7 +598,7 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                 child: Center(
                   child: Icon(
                     Icons.delete,
-                    color: _slideOffset < _cancelThreshold ? Colors.red : Colors.red.withValues(alpha: 0.5),
+                    color: _slideOffset < _cancelThreshold ? AppColors.error : AppColors.errorWithOpacity(0.5),
                     size: 28,
                   ),
                 ),
@@ -619,15 +614,12 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                     Icon(
                       Icons.arrow_back_ios,
                       size: 16,
-                      color: Colors.grey[600],
+                      color: theme.textTheme.bodyMedium?.color,
                     ),
                     const SizedBox(width: 8),
                     Text(
                       'Slide to cancel',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
-                      ),
+                      style: theme.textTheme.bodyMedium,
                     ),
                   ],
                 ),
@@ -647,10 +639,10 @@ class _VoiceRecordingScreenState extends State<VoiceRecordingScreen>
                     height: 56,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.red,
+                      color: AppColors.recording,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.red.withValues(alpha: 0.3),
+                          color: AppColors.errorWithOpacity(0.3),
                           blurRadius: 15,
                           spreadRadius: 2,
                         ),

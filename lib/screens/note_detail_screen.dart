@@ -6,6 +6,7 @@ import '../models/voice_note.dart';
 import '../models/category.dart';
 import '../services/storage_service.dart';
 import '../services/audio_service.dart';
+import '../theme/app_colors.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class NoteDetailScreen extends StatefulWidget {
@@ -120,26 +121,26 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: colorScheme.surface,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Note Details',
-          style: TextStyle(
-            color: Colors.black87,
-            fontWeight: FontWeight.bold,
-          ),
+          style: theme.appBarTheme.titleTextStyle,
         ),
         actions: [
           if (_isEditing) ...[
             IconButton(
-              icon: const Icon(Icons.close, color: Colors.red),
+              icon: Icon(Icons.close, color: AppColors.error),
               onPressed: () {
                 setState(() {
                   _isEditing = false;
@@ -149,16 +150,16 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
               },
             ),
             IconButton(
-              icon: const Icon(Icons.check, color: Colors.green),
+              icon: Icon(Icons.check, color: AppColors.success),
               onPressed: _saveChanges,
             ),
           ] else ...[
             IconButton(
-              icon: const Icon(Icons.edit, color: Colors.black54),
+              icon: Icon(Icons.edit, color: theme.iconTheme.color),
               onPressed: () => setState(() => _isEditing = true),
             ),
             IconButton(
-              icon: const Icon(Icons.copy, color: Colors.black54),
+              icon: Icon(Icons.copy, color: theme.iconTheme.color),
               onPressed: _copyText,
             ),
           ],
@@ -179,9 +180,12 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   }
 
   Widget _buildAudioPlayer() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
     final categoryColor = widget.note.category != null
         ? Categories.getColor(widget.note.category)
-        : Colors.blue;
+        : colorScheme.primary;
 
     final progress = _totalDuration.inSeconds > 0
         ? _currentPosition.inSeconds / _totalDuration.inSeconds
@@ -255,7 +259,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: Colors.grey[600],
+                  color: isDark ? AppColors.darkTextSecondary : AppColors.lightTextSecondary,
                 ),
               ),
             ],
@@ -358,15 +362,19 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   }
 
   Widget _buildTitleCard() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -378,10 +386,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           if (_isEditing)
             TextField(
               controller: _titleController,
-              style: const TextStyle(
-                fontSize: 20,
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
               ),
               decoration: const InputDecoration(
                 labelText: 'Title',
@@ -391,24 +397,19 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           else
             Text(
               widget.note.title,
-              style: const TextStyle(
-                fontSize: 20,
+              style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
               ),
             ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Icon(Icons.calendar_today, size: 16, color: Colors.grey[600]),
+              Icon(Icons.calendar_today, size: 16, color: theme.textTheme.bodyMedium?.color),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   _formatFullDate(widget.note.createdAt),
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.grey[700],
-                  ),
+                  style: theme.textTheme.bodySmall,
                 ),
               ),
             ],
@@ -419,15 +420,19 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   }
 
   Widget _buildTextContent() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -438,14 +443,12 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.notes, size: 20, color: Colors.grey[600]),
+              Icon(Icons.notes, size: 20, color: theme.textTheme.bodyMedium?.color),
               const SizedBox(width: 8),
               Text(
                 _isEditing ? 'Edit Notes' : 'Notes',
-                style: TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
                 ),
               ),
             ],
@@ -455,10 +458,8 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
             TextField(
               controller: _textController,
               maxLines: null,
-              style: const TextStyle(
-                fontSize: 16,
+              style: theme.textTheme.bodyLarge?.copyWith(
                 height: 1.6,
-                color: Colors.black87,
               ),
               decoration: InputDecoration(
                 hintText: 'Add notes...',
@@ -471,19 +472,16 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           else if (widget.note.text != null)
             SelectableText(
               widget.note.text!,
-              style: const TextStyle(
-                fontSize: 16,
+              style: theme.textTheme.bodyLarge?.copyWith(
                 height: 1.6,
-                color: Colors.black87,
               ),
             )
           else
             Text(
               'No notes',
-              style: TextStyle(
-                fontSize: 16,
+              style: theme.textTheme.bodyLarge?.copyWith(
                 height: 1.6,
-                color: Colors.grey[400],
+                color: isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary,
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -493,15 +491,19 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
   }
 
   Widget _buildStatisticsCard() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -512,14 +514,12 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.info_outline, size: 20, color: Colors.grey[600]),
+              Icon(Icons.info_outline, size: 20, color: theme.textTheme.bodyMedium?.color),
               const SizedBox(width: 8),
               Text(
                 'Information',
-                style: TextStyle(
-                  fontSize: 16,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
                 ),
               ),
             ],
@@ -574,10 +574,7 @@ class _NoteDetailScreenState extends State<NoteDetailScreen> {
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-            ),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
         ],
       ),

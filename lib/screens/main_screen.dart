@@ -3,6 +3,7 @@ import 'voice_recording_screen.dart';
 import 'history_screen.dart';
 import 'statistics_screen.dart';
 import 'settings_screen.dart';
+import '../theme/app_colors.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -23,13 +24,16 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
+              color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
               blurRadius: 10,
               offset: const Offset(0, -2),
             ),
@@ -43,9 +47,9 @@ class _MainScreenState extends State<MainScreen> {
             });
           },
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: Colors.blue,
-          unselectedItemColor: Colors.grey[600],
+          backgroundColor: theme.colorScheme.surface,
+          selectedItemColor: theme.colorScheme.primary,
+          unselectedItemColor: theme.iconTheme.color,
           selectedFontSize: 12,
           unselectedFontSize: 12,
           elevation: 0,
@@ -80,8 +84,11 @@ class _MainScreenState extends State<MainScreen> {
                   _currentIndex = 0;
                 });
               },
-              backgroundColor: Colors.blue,
-              child: const Icon(Icons.mic, color: Colors.white),
+              backgroundColor: theme.colorScheme.primary,
+              child: Icon(
+                Icons.mic,
+                color: theme.colorScheme.onPrimary,
+              ),
             )
           : null,
     );

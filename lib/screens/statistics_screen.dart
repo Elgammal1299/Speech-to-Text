@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../services/storage_service.dart';
 import '../models/category.dart';
+import '../theme/app_colors.dart';
 
 class StatisticsScreen extends StatefulWidget {
   final bool showAppBar;
@@ -43,23 +44,23 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: widget.showAppBar
           ? AppBar(
               elevation: 0,
-              backgroundColor: Colors.white,
-              title: const Text(
+              backgroundColor: colorScheme.surface,
+              title: Text(
                 'Statistics',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: theme.appBarTheme.titleTextStyle,
               ),
               centerTitle: true,
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.refresh, color: Colors.black87),
+                  icon: Icon(Icons.refresh, color: theme.iconTheme.color),
                   onPressed: _loadStatistics,
                 ),
               ],
@@ -74,6 +75,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Widget _buildEmptyState() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -81,23 +85,20 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           Icon(
             Icons.analytics_outlined,
             size: 80,
-            color: Colors.grey[300],
+            color: isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary,
           ),
           const SizedBox(height: 16),
           Text(
             'No statistics yet',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey[600],
+            style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Start recording to see your statistics',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[400],
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: isDark ? AppColors.darkTextTertiary : AppColors.lightTextTertiary,
             ),
           ),
         ],
@@ -124,15 +125,15 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Widget _buildOverviewCards() {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Overview',
-          style: TextStyle(
-            fontSize: 20,
+          style: theme.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.bold,
-            color: Colors.grey[800],
           ),
         ),
         const SizedBox(height: 12),
@@ -184,15 +185,18 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Widget _buildStatCard(IconData icon, String label, String value, Color color) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -222,10 +226,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[600],
-            ),
+            style: theme.textTheme.bodySmall,
             textAlign: TextAlign.center,
           ),
         ],
@@ -234,14 +235,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Widget _buildActivitySection() {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -252,14 +256,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.trending_up, size: 20, color: Colors.grey[600]),
+              Icon(Icons.trending_up, size: 20, color: theme.textTheme.bodyMedium?.color),
               const SizedBox(width: 8),
               Text(
                 'Activity',
-                style: TextStyle(
-                  fontSize: 18,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
                 ),
               ),
             ],
@@ -284,6 +286,8 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Widget _buildActivityRow(IconData icon, String label, String value, Color color) {
+    final theme = Theme.of(context);
+
     return Row(
       children: [
         Container(
@@ -298,10 +302,7 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         Expanded(
           child: Text(
             label,
-            style: TextStyle(
-              fontSize: 15,
-              color: Colors.grey[700],
-            ),
+            style: theme.textTheme.bodyMedium,
           ),
         ),
         Text(
@@ -324,15 +325,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
     }
 
     final total = categoryBreakdown.values.fold<int>(0, (sum, count) => sum + count);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -343,14 +346,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.pie_chart, size: 20, color: Colors.grey[600]),
+              Icon(Icons.pie_chart, size: 20, color: theme.textTheme.bodyMedium?.color),
               const SizedBox(width: 8),
               Text(
                 'Categories',
-                style: TextStyle(
-                  fontSize: 18,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
                 ),
               ),
             ],
@@ -401,18 +402,13 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                             Expanded(
                               child: Text(
                                 entry.key,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: Colors.grey[700],
-                                ),
+                                style: theme.textTheme.bodySmall,
                               ),
                             ),
                             Text(
                               '$percentage%',
-                              style: TextStyle(
-                                fontSize: 12,
+                              style: theme.textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: Colors.grey[600],
                               ),
                             ),
                           ],
@@ -456,15 +452,17 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
 
   Widget _buildInsightsCard() {
     final avgDuration = _stats['averageDuration'] as Duration;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: isDark ? AppColors.darkCardShadow : AppColors.lightCardShadow,
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -475,14 +473,12 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.lightbulb, size: 20, color: Colors.grey[600]),
+              Icon(Icons.lightbulb, size: 20, color: theme.textTheme.bodyMedium?.color),
               const SizedBox(width: 8),
               Text(
                 'Insights',
-                style: TextStyle(
-                  fontSize: 18,
+                style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey[800],
                 ),
               ),
             ],
@@ -507,19 +503,18 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
   }
 
   Widget _buildInsightItem(IconData icon, String text) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: Colors.blue),
+          Icon(icon, size: 18, color: theme.colorScheme.primary),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               text,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[700],
-              ),
+              style: theme.textTheme.bodyMedium,
             ),
           ),
         ],
